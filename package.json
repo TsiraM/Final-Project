@@ -1,0 +1,20 @@
+{
+  "name": "festiveglowdecor_api",
+  "version": "1.0.0",
+  "description": "This is api for hoilday decor online store ",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tsira Mamaladze",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "node": "^18.20.5"
+  }
+}
