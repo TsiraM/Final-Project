@@ -1,7 +1,7 @@
 {
   "name": "festiveglowdecor_api",
   "version": "1.0.0",
-  "description": "This is api for hoilday decor online store ",
+  "description": "This is api for holiday decor online store ",
   "main": "app.js",
   "type": "module",
   "scripts": {
@@ -13,6 +13,7 @@
   "dependencies": {
     "@prisma/client": "^5.22.0",
     "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "express": "^4.21.1",
     "express-session": "^1.18.1",
     "node": "^18.20.5"
