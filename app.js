@@ -1,3 +1,10 @@
+// References
+// Used my magnets_api code general skeleton.
+// Retrieved users route code example from https://github.com/mbtrum/inet2005-authentication/blob/main/server/routes/users.js.
+// Retrieved purchase code example from ChatGPT and then modified it myself.
+// Used ChatGPT to fix bugs.
+
+
 import express from 'express';
 import session from 'express-session';
 import cors from 'cors'; // Added CORS
