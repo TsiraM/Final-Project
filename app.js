@@ -1,13 +1,6 @@
-// References
-// Used my magnets_api code general skeleton.
-// Retrieved users route code example from https://github.com/mbtrum/inet2005-authentication/blob/main/server/routes/users.js.
-// Retrieved purchase code example from ChatGPT and then modified it myself.
-// Used ChatGPT to fix bugs.
-
-
 import express from 'express';
 import session from 'express-session';
-import cors from 'cors'; // Added CORS
+import cors from 'cors'; 
 import usersRouter from './routes/users.js';
 import productsRouter from './routes/products.js';
  
@@ -15,15 +8,24 @@ import productsRouter from './routes/products.js';
 const app = express();
  
 // Middleware
-app.use(cors()); // Enable CORS
+app.use(cors({
+    credentials: true // allow cookies
+})); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key', // Use environment variable for secret
-    resave: false,
-    saveUninitialized: true
+  secret: 'fkldjbnfdkFTFT5efd3$$sdg89F',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { 
+    httpOnly: true,
+    secure: false,  
+    sameSite: 'lax',  
+    maxAge: 3600000 // 1 hour in milliseconds
+  }
 }));
+
  
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -12,8 +12,10 @@ model Product {
   name           String
   description    String
   cost           Decimal
-  image_filename String?
+  image_filename String
   stock         Int      @default(0)
+
+  purchaseItems  PurchaseItem[] // Relation field added here
 }
 
 model User {
@@ -22,4 +24,37 @@ model User {
   password   String
   first_name String
   last_name  String
+
+   purchases  Purchase[] // Relation field added here
+}
+
+model Purchase {
+  purchase_id   Int     @id @default(autoincrement())
+  customer_id   Int
+  street        String
+  city          String
+  province      String
+  country       String
+  postal_code   String
+  credit_card   String
+  credit_expire String
+  credit_cvv    String
+  invoice_amt   Decimal
+  invoice_tax   Decimal
+  invoice_total Decimal
+  order_date    DateTime @default(now())
+
+  user          User     @relation(fields: [customer_id], references: [id])
+  items         PurchaseItem[]
+}
+
+model PurchaseItem {
+  purchase_id Int
+  product_id  Int
+  quantity    Int
+
+  purchase    Purchase @relation(fields: [purchase_id], references: [purchase_id])
+  product     Product  @relation(fields: [product_id], references: [product_id])
+
+  @@id([purchase_id, product_id]) // Composite primary key
 }
