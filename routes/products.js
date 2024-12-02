@@ -9,25 +9,39 @@ const prisma = new PrismaClient({
 // Get all products
 productsRouter.get('/all', async (req, res) => {
     try {
-        const products = await prisma.product.findMany(); // Fetch all products
-        return res.status(200).json({ message: 'All products retrieved successfully!', products });
+       
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173'); 
+        res.setHeader('Access-Control-Allow-Credentials', 'true'); 
+
+        // Fetch products
+        const products = await prisma.product.findMany();
+        res.setHeader('Content-Type', 'application/json'); 
+        res.status(200).json({ message: "All products retrieved successfully!", products });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Error retrieving products', error: error.message });
+        res.status(500).json({ message: 'Error retrieving products', error: error.message });
     }
 });
-
 // Get product by ID
-productsRouter.get('/:product_id', async (req, res) => {
-    const { product_id } = req.params;
+productsRouter.get('/:id', async (req, res) => {
+    const { id } = req.params; 
     try {
         const product = await prisma.product.findUnique({
-            where: { product_id: Number(product_id) }, // Use product_id as the unique identifier
+            where: { product_id: Number(id) }, 
         });
+
         if (!product) {
-            return res.status(404).json({ message: `Product with ID ${product_id} not found!` });
+            return res.status(404).json({ message: `Product with ID ${id} not found!` });
         }
-        return res.status(200).json({ message: `Product with ID ${product_id} retrieved successfully!`, product });
+
+        // Image URL
+        return res.status(200).json({
+            message: `Product with ID ${id} retrieved successfully!`,
+            product: {
+                ...product,
+                thumbnail: `/images/${product.image_filename}`, 
+            },
+        });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Error retrieving product', error: error.message });
@@ -37,7 +51,7 @@ productsRouter.get('/:product_id', async (req, res) => {
 // Purchase route to handle the entire process (products, billing, shipping)
 productsRouter.post('/purchase', async (req, res) => {
     try {
-        console.log('Session Data:', req.session);  // Log session data to see if user_id is there
+        console.log('Session Data:', req.session);  
         
         // Check if user is authenticated
         if (!req.session || !req.session.user_id) {
@@ -45,7 +59,7 @@ productsRouter.post('/purchase', async (req, res) => {
         }
 
         const customer_id = req.session.user_id;
-        console.log('Customer ID:', customer_id); // Log customer_id to ensure it's being retrieved
+        console.log('Customer ID:', customer_id); 
         
         // Destructure the required fields from the request body
         const { street, city, province, country, postal_code, credit_card, credit_expire, credit_cvv, cart, invoice_amt, invoice_tax, invoice_total } = req.body;
@@ -101,7 +115,7 @@ productsRouter.post('/purchase', async (req, res) => {
 
                 // Query product by product_id
                 const product = await prisma.product.findUnique({
-                    where: { product_id: productIdNum }, // Correct the way product_id is passed
+                    where: { product_id: productIdNum }, 
                 });
 
                 if (!product) {
