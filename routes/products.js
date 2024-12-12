@@ -48,11 +48,20 @@ productsRouter.get('/:id', async (req, res) => {
     }
 });
 
-// Purchase route to handle the entire process (products, billing, shipping)
 productsRouter.post('/purchase', async (req, res) => {
     try {
+        // Define cookie options for cartPayload with SameSite and secure flag
+        const cookieOptions = {
+            sameSite: 'None',  // Allow cross-site requests
+            secure: process.env.NODE_ENV === 'production',  // Enable secure cookies in production (HTTPS only)
+            httpOnly: true,    // Ensures the cookie is not accessible via JavaScript
+        };
+
+        // Set session or cart payload cookie
+        res.cookie('cartPayload', req.body.cart, cookieOptions);
+
         console.log('Session Data:', req.session);  
-        
+
         // Check if user is authenticated
         if (!req.session || !req.session.user_id) {
             return res.status(401).json({ message: 'Unauthorized: Please log in' });
