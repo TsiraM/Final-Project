@@ -22,57 +22,59 @@ function Cart() {
 
     // Fetch product details and calculate totals
     useEffect(() => {
-        const groupedItems = getGroupedItems();
-        // Function to fetch product details based on grouped item IDs
-        const fetchProductDetails = async () => {
-            const productDetails = [];
-            let total = 0;
-            const api_host = 'http://localhost:3000/public/images/';
-            // Iterate over each product ID in the grouped items
-            for (const id of Object.keys(groupedItems)) {
-                const validProductId = Number(id);
-                if (isNaN(validProductId)) continue;
-                // Fetch product data from the server using the product ID
-                try {
-                    const response = await fetch(`http://localhost:3000/products/${validProductId}`);
-                    if (response.ok) {
-                        const data = await response.json();
-                        const product = data.product;
+    const groupedItems = getGroupedItems();
+    
+    const fetchProductDetails = async () => {
+        const productDetails = [];
+        let total = 0;
+        const api_host = 'http://localhost:3000/public/images/';
+        
+        for (const id of Object.keys(groupedItems)) {
+            const validProductId = Number(id);
+            
+            // Check if the product ID is valid (not 0 or NaN)
+            if (isNaN(validProductId) || validProductId <= 0) continue;
+            
+            try {
+                const response = await fetch(`http://localhost:3000/products/${validProductId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const product = data.product;
 
-                        if (product && product.cost) {
-                            const price = parseFloat(product.cost);
-                            const quantity = groupedItems[id];
-                            const itemTotal = price * quantity;
-                            // Add the product details to the productDetails array
-                            productDetails.push({
-                                ...product,
-                                price,
-                                quantity,
-                                total: itemTotal,
-                                thumbnail: `${api_host}${product.image_filename}`,
-                            });
+                    if (product && product.cost) {
+                        const price = parseFloat(product.cost);
+                        const quantity = groupedItems[id];
+                        const itemTotal = price * quantity;
+                        
+                        productDetails.push({
+                            ...product,
+                            price,
+                            quantity,
+                            total: itemTotal,
+                            thumbnail: `${api_host}${product.image_filename}`,
+                        });
 
-                            total += itemTotal;
-                        }
+                        total += itemTotal;
                     }
-                // Log any errors that occur during the fetch operation
-                } catch (err) {
-                    console.error(`Error fetching product ID ${id}:`, err);
                 }
+            
+            } catch (err) {
+                console.error(`Error fetching product ID ${id}:`, err);
             }
-            // Update the cart items state with the fetched product details
-            setCartItems(productDetails);
-            // Update the subtotal state with the calculated total
-            setSubtotal(total.toFixed(2));
-        };
-        // Check if there are any grouped items to fetch details for
-        if (Object.keys(groupedItems).length > 0) {
-            fetchProductDetails();
-        } else {
-            setCartItems([]);
-            setSubtotal(0);
         }
-    }, []);
+        
+        setCartItems(productDetails);
+        
+        setSubtotal(total.toFixed(2));
+    };
+    
+    if (Object.keys(groupedItems).length > 0) {
+        fetchProductDetails();
+    } else {
+        setCartItems([]);
+        setSubtotal(0);
+    }
+}, []);
 
     // Handle checkout and payload creation
     const handleCheckout = () => {
@@ -80,12 +82,12 @@ function Cart() {
         const invoiceTax = (Number(subtotal) * 0.15).toFixed(2);
         const invoiceTotal = (Number(subtotal) * 1.15).toFixed(2);
         const payload = {
-            cart: cartString,
+            cartItems,
             invoice_amt: subtotal,
             invoice_tax: invoiceTax,
             invoice_total: invoiceTotal,
         };
-        Cookies.set("cartPayload", JSON.stringify(payload), { expires: 7 });
+        localStorage.setItem("cartPayload", JSON.stringify(payload)); // Use localStorage for consistency
         navigate("/checkout");
     };
 

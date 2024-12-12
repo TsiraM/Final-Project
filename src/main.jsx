@@ -11,7 +11,6 @@ import Cart from './routes/Cart';
 import Checkout from './routes/Checkout';
 import Confirmation from './routes/Confirmation';
 
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -21,6 +20,9 @@ const router = createBrowserRouter([
         path: "/",
         element: <Home />,
       },
+      
+      {path: "/home",
+       element: <Home />},
       {
         path: "/details/:id",
         element: <Details />,
@@ -53,11 +55,10 @@ const router = createBrowserRouter([
   },
 ]);
 
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} /> 
+    <RouterProvider router={router} /> {/* Pass the router to RouterProvider */}
   </React.StrictMode>
 );
